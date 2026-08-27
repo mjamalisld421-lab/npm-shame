@@ -1,6 +1,23 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
+const MEGABYTE = 1024 * 1024;
+
+const SIZE_LIMITS = [
+  { limitBytes: 10 * MEGABYTE, message: "Barely any baggage. npm approves." },
+  {
+    limitBytes: 100 * MEGABYTE,
+    message: "A modest dependency backpack. Still portable.",
+  },
+  {
+    limitBytes: 500 * MEGABYTE,
+    message: "That dependency suitcase is getting heavy.",
+  },
+];
+
+const LARGEST_SIZE_MESSAGE =
+  "Your node_modules folder has developed its own gravitational pull.";
+
 function calculateDirectorySize(directoryPath) {
   let totalBytes = 0;
   const entries = fs.readdirSync(directoryPath, { withFileTypes: true });
@@ -22,12 +39,21 @@ function calculateDirectorySize(directoryPath) {
   return totalBytes;
 }
 
+function getShameMessageForSize(totalBytes) {
+  const matchingLimit = SIZE_LIMITS.find(
+    ({ limitBytes }) => totalBytes < limitBytes,
+  );
+
+  return matchingLimit ? matchingLimit.message : LARGEST_SIZE_MESSAGE;
+}
+
 function main() {
   const nodeModulesPath = path.join(process.cwd(), "node_modules");
 
   try {
     const totalBytes = calculateDirectorySize(nodeModulesPath);
     console.log(`node_modules size: ${totalBytes} bytes`);
+    console.log(getShameMessageForSize(totalBytes));
   } catch (error) {
     if (error && error.code === "ENOENT") {
       console.error(`No node_modules folder found in ${process.cwd()}.`);
@@ -42,4 +68,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { calculateDirectorySize };
+module.exports = { calculateDirectorySize, getShameMessageForSize };
