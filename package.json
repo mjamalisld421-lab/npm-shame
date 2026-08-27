@@ -5,7 +5,8 @@
   "description": "Private development package for the npm-shame project.",
   "license": "UNLICENSED",
   "scripts": {
-    "measure": "node index.js"
+    "measure": "node index.js",
+    "postinstall": "node index.js"
   },
   "dependencies": {
     "boxen": "5.1.2",
