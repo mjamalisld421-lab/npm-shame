@@ -1,13 +1,31 @@
 {
   "name": "npm-shame",
-  "version": "0.0.0",
-  "private": true,
-  "description": "Private development package for the npm-shame project.",
-  "license": "UNLICENSED",
+  "version": "1.0.0",
+  "description": "Measure node_modules size and print a short, size-based message.",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "README.md"
+  ],
   "scripts": {
     "measure": "node index.js",
     "postinstall": "node index.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mjamalisld421-lab/npm-shame.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mjamalisld421-lab/npm-shame/issues"
+  },
+  "homepage": "https://github.com/mjamalisld421-lab/npm-shame#readme",
+  "keywords": [
+    "node-modules",
+    "dependencies",
+    "disk-usage",
+    "postinstall"
+  ],
+  "license": "UNLICENSED",
   "dependencies": {
     "boxen": "5.1.2",
     "chalk": "4.1.2"
