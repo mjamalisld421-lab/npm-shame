@@ -1,7 +1,5 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const boxen = require("boxen");
-const chalk = require("chalk");
 
 const MEGABYTE = 1024 * 1024;
 
@@ -50,7 +48,17 @@ function getShameMessageForSize(totalBytes) {
 }
 
 function main() {
-  const nodeModulesPath = path.join(process.cwd(), "node_modules");
+  if (process.env.NPM_SHAME_DISABLE === "1") {
+    return;
+  }
+
+  const boxen = require("boxen");
+  const chalk = require("chalk");
+  const projectRoot =
+    process.env.npm_lifecycle_event === "postinstall" && process.env.INIT_CWD
+      ? process.env.INIT_CWD
+      : process.cwd();
+  const nodeModulesPath = path.join(projectRoot, "node_modules");
 
   try {
     const totalBytes = calculateDirectorySize(nodeModulesPath);
@@ -60,7 +68,7 @@ function main() {
     console.log(boxen(chalk.yellow(message), { borderStyle: "round" }));
   } catch (error) {
     if (error && error.code === "ENOENT") {
-      console.error(`No node_modules folder found in ${process.cwd()}.`);
+      console.error(`No node_modules folder found in ${projectRoot}.`);
     } else {
       console.error(`Could not measure node_modules: ${error.message}`);
     }
