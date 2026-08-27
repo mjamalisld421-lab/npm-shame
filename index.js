@@ -18,21 +18,38 @@ const SIZE_LIMITS = [
 const LARGEST_SIZE_MESSAGE =
   "Your node_modules folder has developed its own gravitational pull.";
 
-function calculateDirectorySize(directoryPath) {
+function calculateDirectorySize(directoryPath, visitedPaths = new Set()) {
+  const realDirectoryPath = fs.realpathSync(directoryPath);
+
+  if (visitedPaths.has(realDirectoryPath)) {
+    return 0;
+  }
+
+  visitedPaths.add(realDirectoryPath);
   let totalBytes = 0;
-  const entries = fs.readdirSync(directoryPath, { withFileTypes: true });
+  const entries = fs.readdirSync(realDirectoryPath, { withFileTypes: true });
 
   for (const entry of entries) {
-    const entryPath = path.join(directoryPath, entry.name);
+    const entryPath = path.join(realDirectoryPath, entry.name);
+    let realEntryPath;
 
-    if (entry.isSymbolicLink()) {
-      continue;
+    try {
+      realEntryPath = fs.realpathSync(entryPath);
+    } catch (error) {
+      if (entry.isSymbolicLink() && error && error.code === "ENOENT") {
+        continue;
+      }
+
+      throw error;
     }
 
-    if (entry.isDirectory()) {
-      totalBytes += calculateDirectorySize(entryPath);
-    } else if (entry.isFile()) {
-      totalBytes += fs.statSync(entryPath).size;
+    const stats = fs.statSync(realEntryPath);
+
+    if (stats.isDirectory()) {
+      totalBytes += calculateDirectorySize(realEntryPath, visitedPaths);
+    } else if (stats.isFile() && !visitedPaths.has(realEntryPath)) {
+      visitedPaths.add(realEntryPath);
+      totalBytes += stats.size;
     }
   }
 
