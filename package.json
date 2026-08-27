@@ -6,5 +6,9 @@
   "license": "UNLICENSED",
   "scripts": {
     "measure": "node index.js"
+  },
+  "dependencies": {
+    "boxen": "5.1.2",
+    "chalk": "4.1.2"
   }
 }
