@@ -1,5 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const boxen = require("boxen");
+const chalk = require("chalk");
 
 const MEGABYTE = 1024 * 1024;
 
@@ -52,8 +54,10 @@ function main() {
 
   try {
     const totalBytes = calculateDirectorySize(nodeModulesPath);
+    const message = getShameMessageForSize(totalBytes);
+
     console.log(`node_modules size: ${totalBytes} bytes`);
-    console.log(getShameMessageForSize(totalBytes));
+    console.log(boxen(chalk.yellow(message), { borderStyle: "round" }));
   } catch (error) {
     if (error && error.code === "ENOENT") {
       console.error(`No node_modules folder found in ${process.cwd()}.`);
