@@ -4,6 +4,5 @@
 
 ## Package manager notes
 
-- **pnpm:** pnpm uses a link-heavy, content-addressed dependency layout, so filesystem traversal and reported sizes can differ from a traditional npm `node_modules` tree. npm-shame follows links but counts each canonical filesystem path once.
-- **Yarn Plug'n'Play:** Yarn PnP may not create a traditional `node_modules` directory, so npm-shame's directory-based measurement may not apply.
-- **Install scripts:** npm-shame runs through `postinstall`. Package managers, environments, or project policies may disable lifecycle scripts or require explicit approval, in which case the message may not run automatically.
+- **pnpm:** pnpm uses a link-heavy, content-addressed layout, so reported sizes can differ from a traditional npm `node_modules` tree. Dependency lifecycle scripts such as `postinstall` are limited by default unless explicitly allowed or approved under the relevant install-script policy.
+- **Yarn Plug'n'Play:** Yarn PnP may not expose a traditional `node_modules` directory, so npm-shame's directory-based measurement may not apply. Depending on the Yarn configuration or policy, dependency `postinstall` scripts may also be disabled or blocked.
